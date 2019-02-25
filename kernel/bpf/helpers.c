@@ -18,6 +18,7 @@
 #include <linux/sched.h>
 #include <linux/uidgid.h>
 #include <linux/filter.h>
+#include <linux/init_task.h>
 
 /* If kernel subsystem is allowing eBPF programs to call this function,
  * inside its own verifier_ops->get_func_proto() callback it should return
@@ -364,3 +365,34 @@ const struct bpf_func_proto bpf_get_local_storage_proto = {
 };
 #endif
 #endif
+
+BPF_CALL_1(bpf_progenyof, int, pid)
+{
+	int result = 0;
+	struct task_struct *task = current;
+
+	WARN_ON(!rcu_read_lock_held());
+
+	if (unlikely(!task))
+		return -EINVAL;
+
+	if (pid == 0)
+		return 1;
+
+	while (task != &init_task) {
+		if (task->pid == pid) {
+			result = 1;
+			break;
+		}
+		task = rcu_dereference(task->real_parent);
+	}
+
+	return result;
+}
+
+const struct bpf_func_proto bpf_progenyof_proto = {
+	.func		= bpf_progenyof,
+	.gpl_only	= false,
+	.ret_type	= RET_INTEGER,
+	.arg1_type	= ARG_ANYTHING,
+};

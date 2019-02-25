@@ -2463,6 +2463,13 @@ union bpf_attr {
  * 	Return
  * 		0 if iph and th are a valid SYN cookie ACK, or a negative error
  * 		otherwise.
+ * int bpf_progenyof(int pid)
+ *	Description
+ *		This helper is useful in programs that want to filter events
+ *		happening to a pid of any of its descendants.
+ *	Return
+ *		1 if the currently executing process' pid is in the process
+ *		hierarchy of the passed pid. 0 Otherwise.
  */
 #define __BPF_FUNC_MAPPER(FN)		\
 	FN(unspec),			\
@@ -2565,7 +2572,8 @@ union bpf_attr {
 	FN(skb_ecn_set_ce),		\
 	FN(get_listener_sock),		\
 	FN(skc_lookup_tcp),		\
-	FN(tcp_check_syncookie),
+	FN(tcp_check_syncookie),	\
+	FN(progenyof),
 
 /* integer value in 'imm' field of BPF_CALL instruction selects which helper
  * function eBPF program intends to call
