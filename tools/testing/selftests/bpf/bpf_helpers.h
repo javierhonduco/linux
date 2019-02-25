@@ -192,6 +192,7 @@ static int (*bpf_skb_ecn_set_ce)(void *ctx) =
 static int (*bpf_tcp_check_syncookie)(struct bpf_sock *sk,
 	    void *ip, int ip_len, void *tcp, int tcp_len) =
 	(void *) BPF_FUNC_tcp_check_syncookie;
+static int (*bpf_progenyof)(int pid) = (void *) BPF_FUNC_progenyof;
 
 /* llvm builtin functions that eBPF C program may use to
  * emit BPF_LD_ABS and BPF_LD_IND instructions

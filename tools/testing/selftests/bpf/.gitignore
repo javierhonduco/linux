@@ -32,3 +32,4 @@ test_tcpnotify_user
 test_libbpf
 test_tcp_check_syncookie_user
 alu32
+test_progenyof_user
